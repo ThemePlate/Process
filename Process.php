@@ -18,12 +18,23 @@ class Process {
 
 	public function __construct( $callback_func, $callback_args = array() ) {
 
-		$this->identifier    = 'tpp_' . $callback_func;
 		$this->callback_func = $callback_func;
 		$this->callback_args = $callback_args;
 
+		$this->generate_identifier();
+
 		add_action( 'wp_ajax_' . $this->identifier, array( $this, 'handle' ) );
 		add_action( 'wp_ajax_nopriv_' . $this->identifier, array( $this, 'handle' ) );
+
+	}
+
+
+	private function generate_identifier() {
+
+		$cb_func = print_r( $this->callback_func, true );
+		$cb_args = print_r( $this->callback_args, true );
+
+		$this->identifier = 'tpp_' . md5( $cb_func . $cb_args );
 
 	}
 
