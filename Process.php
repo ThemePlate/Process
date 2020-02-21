@@ -49,6 +49,8 @@ class Process {
 		);
 		$post_url   = add_query_arg( $query_args, admin_url( 'admin-ajax.php' ) );
 		$post_args  = array(
+			'timeout'  => 1,
+			'blocking' => false,
 			'body'     => $this->callback_args,
 		);
 
