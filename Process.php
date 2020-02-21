@@ -16,7 +16,7 @@ class Process {
 	private $callback_args;
 
 
-	public function __construct( $callback_func, $callback_args = null ) {
+	public function __construct( $callback_func, $callback_args = array() ) {
 
 		$this->identifier    = 'tpp_' . $callback_func;
 		$this->callback_func = $callback_func;
