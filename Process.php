@@ -33,7 +33,7 @@ class Process {
 		session_write_close();
 
 		if ( wp_verify_nonce( $_REQUEST['nonce'], $this->identifier ) ) {
-			call_user_func_array( $this->callback_func, $this->callback_args );
+			call_user_func_array( $this->callback_func, (array) $this->callback_args );
 		}
 
 		wp_die();
