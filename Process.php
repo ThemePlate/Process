@@ -21,7 +21,7 @@ class Process {
 	private $error_output;
 
 
-	public function __construct( $callback_func, $callback_args = array() ) {
+	public function __construct( $callback_func, $callback_args = null ) {
 
 		$this->callback_func = $callback_func;
 		$this->callback_args = $callback_args;
