@@ -14,6 +14,8 @@ class Process {
 	private $identifier;
 	private $callback_func;
 	private $callback_args;
+	private $success_callback;
+	private $error_callback;
 
 
 	public function __construct( $callback_func, $callback_args = array() ) {
@@ -66,6 +68,20 @@ class Process {
 		);
 
 		return wp_remote_post( esc_url_raw( $post_url ), $post_args );
+
+	}
+
+
+	public function then( $callback ) {
+
+		$this->success_callback = $callback;
+
+	}
+
+
+	public function catch( $callback ) {
+
+		$this->error_callback = $callback;
 
 	}
 
