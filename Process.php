@@ -84,6 +84,8 @@ class Process {
 
 		$this->success_callback = $callback;
 
+		return $this;
+
 	}
 
 
@@ -91,16 +93,20 @@ class Process {
 
 		$this->error_callback = $callback;
 
+		return $this;
+
 	}
 
 
 	private function trigger() {
 
-		if ( $this->error_output ) {
+		if ( $this->error_output && $this->error_callback ) {
 			return call_user_func( $this->error_callback, $this->error_output );
-		} else {
-			return call_user_func( $this->success_callback, $this->success_output );
+		} elseif ( $this->success_callback ) {
+			call_user_func( $this->success_callback, $this->success_output );
 		}
+
+		return $this->success_output;
 
 	}
 
