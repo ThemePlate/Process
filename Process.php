@@ -16,6 +16,8 @@ class Process {
 	private $callback_args;
 	private $success_callback;
 	private $error_callback;
+	private $success_output;
+	private $error_output;
 
 
 	public function __construct( $callback_func, $callback_args = array() ) {
@@ -46,7 +48,13 @@ class Process {
 		session_write_close();
 
 		if ( wp_verify_nonce( $_REQUEST['nonce'], $this->identifier ) ) {
-			call_user_func_array( $this->callback_func, (array) $this->callback_args );
+			try {
+				$this->success_output = call_user_func_array( $this->callback_func, (array) $this->callback_args );
+			} catch ( \Throwable $throwable ) {
+				$this->error_output = $throwable;
+			} finally {
+				$this->trigger();
+			}
 		}
 
 		wp_die();
@@ -82,6 +90,17 @@ class Process {
 	public function catch( $callback ) {
 
 		$this->error_callback = $callback;
+
+	}
+
+
+	private function trigger() {
+
+		if ( $this->error_output ) {
+			return call_user_func( $this->error_callback, $this->error_output );
+		} else {
+			return call_user_func( $this->success_callback, $this->success_output );
+		}
 
 	}
 
