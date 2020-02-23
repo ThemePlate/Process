@@ -11,6 +11,7 @@ namespace ThemePlate;
 
 class Process {
 
+	private static $storage = array();
 	private $identifier;
 	private $callback_func;
 	private $callback_args;
@@ -39,6 +40,17 @@ class Process {
 		$cb_args = print_r( $this->callback_args, true );
 
 		$this->identifier = 'tpp_' . md5( $cb_func . $cb_args );
+		$base_identifier  = $this->identifier;
+
+		if ( array_key_exists( $this->identifier, self::$storage ) ) {
+			$count = self::$storage[ $this->identifier ] + 1;
+
+			$this->identifier .= '_' . $count;
+
+			self::$storage[ $base_identifier ] = $count;
+		}
+
+		self::$storage[ $this->identifier ] = 0;
 
 	}
 
