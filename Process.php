@@ -73,6 +73,7 @@ class Process {
 			'timeout'  => 1,
 			'blocking' => false,
 			'body'     => $this->callback_args,
+			'cookies'  => $_COOKIE,
 		);
 
 		return wp_remote_post( esc_url_raw( $post_url ), $post_args );
