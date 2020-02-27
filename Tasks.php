@@ -25,20 +25,20 @@ class Tasks {
 
 	public function runner( $identifier ) {
 
-		$this->tasks = get_transient( $identifier . '_tasks', array() );
+		$this->tasks = get_option( $identifier . '_tasks', array() );
 
 		foreach ( $this->tasks as $index => $task ) {
 			call_user_func_array( $task['callback_func'], (array) $task['callback_args'] );
 		}
 
-		delete_transient( $identifier . '_tasks' );
+		delete_option( $identifier . '_tasks' );
 
 	}
 
 
 	public function execute() {
 
-		set_transient( $this->identifier . '_tasks', $this->tasks );
+		update_option( $this->identifier . '_tasks', $this->tasks, false );
 		$this->process->dispatch();
 
 	}
