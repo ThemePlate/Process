@@ -42,6 +42,7 @@ class Tasks {
 		$this->start = time();
 		$this->tasks = get_option( $identifier . '_tasks', array() );
 
+		$done  = array();
 		$index = 0;
 		$total = count( $this->tasks );
 		$limit = $this->limit ?: $total;
@@ -58,12 +59,15 @@ class Tasks {
 			} catch ( \Throwable $throwable ) {
 				$output = $throwable;
 			}
-			unset( $this->tasks[ $index ] );
 
+			$done[ $index ] = compact( 'task', 'output' );
+
+			unset( $this->tasks[ $index ] );
 			$index++;
 		}
 
 		$this->unlock();
+		$this->_report( $done );
 
 		if ( $index < $total ) {
 			$this->next();
@@ -176,6 +180,17 @@ class Tasks {
 		}
 
 		delete_option( $this->identifier . '_tasks' );
+
+	}
+
+
+	private function _report( $done ) {
+
+		if ( $this->report_callback ) {
+			return call_user_func( $this->report_callback, $done );
+		}
+
+		return null;
 
 	}
 
