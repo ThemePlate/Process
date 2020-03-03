@@ -52,7 +52,11 @@ class Tasks {
 		while ( $index < $limit ) {
 			$task = $this->tasks[ $index ];
 
-			call_user_func_array( $task['callback_func'], (array) $task['callback_args'] );
+			try {
+				$output = call_user_func_array( $task['callback_func'], (array) $task['callback_args'] );
+			} catch ( \Throwable $throwable ) {
+				$output = $throwable;
+			}
 			unset( $this->tasks[ $index ] );
 
 			$index++;
