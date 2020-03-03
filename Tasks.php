@@ -13,6 +13,7 @@ class Tasks {
 
 	private $identifier;
 	private $process;
+	private $report_callback;
 	private $start = 0;
 	private $limit = 0;
 	private $every = 20;
@@ -98,6 +99,13 @@ class Tasks {
 	public function every( $second ) {
 
 		$this->every = $second;
+
+	}
+
+
+	public function report( $callback ) {
+
+		$this->report_callback = $callback;
 
 	}
 
