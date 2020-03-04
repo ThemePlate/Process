@@ -15,6 +15,7 @@ class Tasks {
 	private $process;
 	private $report_callback;
 	private $start = 0;
+	private $end   = 0;
 	private $limit = 0;
 	private $every = 20;
 	private $tasks = array();
@@ -39,7 +40,6 @@ class Tasks {
 
 		$this->lock();
 
-		$this->start = time();
 		$this->tasks = get_option( $identifier . '_tasks', array() );
 
 		$done  = array();
@@ -148,12 +148,16 @@ class Tasks {
 
 	private function lock() {
 
+		$this->start = time();
+
 		update_option( $this->identifier . '_lock', microtime(), false );
 
 	}
 
 
 	private function unlock() {
+
+		$this->end = time();
 
 		delete_option( $this->identifier . '_lock' );
 
@@ -186,11 +190,17 @@ class Tasks {
 
 	private function _report( $done ) {
 
-		if ( $this->report_callback ) {
-			return call_user_func( $this->report_callback, $done );
+		if ( ! $this->report_callback ) {
+			return;
 		}
 
-		return null;
+		$output = array(
+			'start' => $this->start,
+			'end'   => $this->end,
+			'tasks' => $done,
+		);
+
+		return call_user_func( $this->report_callback, $output );
 
 	}
 
