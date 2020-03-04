@@ -90,12 +90,16 @@ class Tasks {
 
 		$this->tasks[] = compact( 'callback_func', 'callback_args' );
 
+		return $this;
+
 	}
 
 
 	public function limit( $number ) {
 
 		$this->limit = $number;
+
+		return $this;
 
 	}
 
@@ -104,12 +108,16 @@ class Tasks {
 
 		$this->every = $second;
 
+		return $this;
+
 	}
 
 
 	public function report( $callback ) {
 
 		$this->report_callback = $callback;
+
+		return $this;
 
 	}
 
