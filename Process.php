@@ -113,11 +113,11 @@ class Process {
 
 	private function trigger() {
 
-		if ( $this->error_output && $this->error_callback ) {
+		if ( $this->error_callback && $this->error_output ) {
 			call_user_func( $this->error_callback, $this->error_output );
 		}
 
-		if ( $this->success_callback ) {
+		if ( $this->success_callback && $this->success_output ) {
 			call_user_func( $this->success_callback, $this->success_output );
 		}
 
