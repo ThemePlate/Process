@@ -81,7 +81,8 @@ class Tasks {
 	public function execute() {
 
 		$this->save();
-		$this->process->dispatch();
+
+		return $this->process->dispatch();
 
 	}
 
