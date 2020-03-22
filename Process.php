@@ -62,8 +62,8 @@ class Process {
 		if ( wp_verify_nonce( $_REQUEST['nonce'], $this->identifier ) ) {
 			try {
 				$this->success_output = call_user_func_array( $this->callback_func, (array) $this->callback_args );
-			} catch ( \Throwable $throwable ) {
-				$this->error_output = $throwable;
+			} catch ( \Exception $e ) {
+				$this->error_output = $e->getMessage();
 			} finally {
 				$this->trigger();
 			}

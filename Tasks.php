@@ -56,8 +56,8 @@ class Tasks {
 
 			try {
 				$output = call_user_func_array( $task['callback_func'], (array) $task['callback_args'] );
-			} catch ( \Throwable $throwable ) {
-				$output = $throwable;
+			} catch ( \Exception $e ) {
+				$output = $e->getMessage();
 			}
 
 			$done[ $index ] = compact( 'task', 'output' );
