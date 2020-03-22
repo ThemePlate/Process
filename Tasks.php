@@ -199,7 +199,7 @@ class Tasks {
 	private function _report( $done ) {
 
 		if ( ! $this->report_callback ) {
-			return;
+			return null;
 		}
 
 		$output = array(
