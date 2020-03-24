@@ -20,6 +20,7 @@ class Tasks {
 	private $every = 20;
 	private $tasks = array();
 
+
 	public function __construct( $identifier ) {
 
 		$this->identifier = 'tpt_' . $identifier;
@@ -36,7 +37,6 @@ class Tasks {
 		if ( $this->is_running() ) {
 			wp_die();
 		}
-
 
 		$this->lock();
 
@@ -79,6 +79,10 @@ class Tasks {
 
 
 	public function execute() {
+
+		if ( empty( $this->tasks ) ) {
+			return null;
+		}
 
 		$this->save();
 
