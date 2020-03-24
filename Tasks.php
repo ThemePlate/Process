@@ -141,9 +141,9 @@ class Tasks {
 
 	private function save() {
 
-		$this->tasks = array_values( $this->tasks );
+		$tasks = array_values( $this->tasks );
 
-		update_option( $this->identifier . '_tasks', $this->tasks, false );
+		update_option( $this->identifier . '_tasks', $tasks, false );
 
 	}
 
