@@ -134,6 +134,7 @@ class Tasks {
 
 			$schedules[ $this->identifier . '_interval' ] = array(
 				'interval' => $interval,
+				/* translators: %s: number of seconds */
 				'display'  => sprintf( __( 'Every %d Seconds' ), $interval ),
 			);
 		}
