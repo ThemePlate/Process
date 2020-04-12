@@ -17,7 +17,7 @@ class Tasks {
 	private $start = 0;
 	private $end   = 0;
 	private $limit = 0;
-	private $every = 20;
+	private $every = 0;
 	private $tasks = array();
 
 
@@ -39,6 +39,19 @@ class Tasks {
 	}
 
 
+	private function set_defaults() {
+
+		if ( ! $this->limit && $this->every ) {
+			$this->limit = 1;
+		}
+
+		if ( ! $this->every && $this->limit ) {
+			$this->every = 20;
+		}
+
+	}
+
+
 	public function runner( $identifier ) {
 
 		if ( $this->is_running() ) {
@@ -46,6 +59,7 @@ class Tasks {
 		}
 
 		$this->lock();
+		$this->set_defaults();
 
 		$this->tasks = get_option( $identifier . '_tasks', array() );
 
@@ -135,6 +149,8 @@ class Tasks {
 
 
 	public function maybe_schedule( $schedules ) {
+
+		$this->set_defaults();
 
 		if ( $this->limit ) {
 			$interval = $this->every;
