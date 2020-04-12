@@ -81,13 +81,14 @@ class Process {
 	}
 
 
-	public function dispatch() {
+	public function dispatch( $custom_url = null ) {
 
 		$query_args = array(
 			'action' => $this->identifier,
 			'nonce'  => wp_create_nonce( $this->identifier ),
 		);
-		$post_url   = add_query_arg( $query_args, admin_url( 'admin-ajax.php' ) );
+		$post_url   = $custom_url ?? admin_url( 'admin-ajax.php' );
+		$post_url   = add_query_arg( $query_args, $post_url );
 		$post_args  = array(
 			'timeout'  => 1,
 			'blocking' => false,
