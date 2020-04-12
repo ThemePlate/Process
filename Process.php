@@ -55,6 +55,13 @@ class Process {
 	}
 
 
+	public function get_identifier() {
+
+		return $this->identifier;
+
+	}
+
+
 	public function handle() {
 
 		session_write_close();

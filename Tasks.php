@@ -32,6 +32,13 @@ class Tasks {
 	}
 
 
+	public function get_identifier() {
+
+		return $this->process->get_identifier();
+
+	}
+
+
 	public function runner( $identifier ) {
 
 		if ( $this->is_running() ) {
