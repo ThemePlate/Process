@@ -49,6 +49,8 @@ class Tasks {
 			$this->every = 20;
 		}
 
+		$this->lock = $this->every * 2;
+
 	}
 
 
@@ -58,8 +60,8 @@ class Tasks {
 			wp_die();
 		}
 
-		$this->lock();
 		$this->set_defaults();
+		$this->lock();
 
 		$this->tasks = get_option( $identifier . '_tasks', array() );
 
@@ -187,7 +189,7 @@ class Tasks {
 
 		$this->start = time();
 
-		set_transient( $this->identifier . '_lock', microtime(), HOUR_IN_SECONDS );
+		set_transient( $this->identifier . '_lock', microtime(), $this->lock );
 
 	}
 
