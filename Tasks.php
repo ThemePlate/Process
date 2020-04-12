@@ -76,6 +76,8 @@ class Tasks {
 
 		if ( $limit > $total ) {
 			$limit = $total;
+		} elseif ( $limit < $total ) {
+			$this->schedule();
 		}
 
 		while ( $index < $limit ) {
@@ -90,15 +92,14 @@ class Tasks {
 			$done[ $index ] = compact( 'task', 'output' );
 
 			unset( $this->tasks[ $index ] );
+			$this->save();
 			$index++;
 		}
 
 		$this->unlock();
 		$this->_report( $done );
 
-		if ( $index < $total ) {
-			$this->next();
-		} else {
+		if ( $index >= $total ) {
 			$this->complete();
 		}
 
@@ -193,7 +194,7 @@ class Tasks {
 
 		$this->start = time();
 
-		set_transient( $this->identifier . '_lock', microtime(), $this->lock );
+		set_transient( $this->identifier . '_lock', $this->start, $this->lock );
 
 	}
 
@@ -207,9 +208,7 @@ class Tasks {
 	}
 
 
-	private function next() {
-
-		$this->save();
+	private function schedule() {
 
 		if ( ! wp_next_scheduled( $this->identifier . '_event', (array) $this->identifier ) ) {
 			wp_schedule_event( $this->start + $this->every, $this->identifier . '_interval', $this->identifier . '_event', (array) $this->identifier );
