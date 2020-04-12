@@ -46,7 +46,7 @@ class Tasks {
 		}
 
 		if ( ! $this->every && $this->limit ) {
-			$this->every = 20;
+			$this->every = 60;
 		}
 
 		$this->lock = $this->every * 2;
