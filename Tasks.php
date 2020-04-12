@@ -49,7 +49,11 @@ class Tasks {
 			$this->every = 60;
 		}
 
-		$this->lock = $this->every * 2;
+		if ( $this->every ) {
+			$this->lock = $this->every * 2;
+		} else {
+			$this->lock = count( $this->tasks ) * 60;
+		}
 
 	}
 
