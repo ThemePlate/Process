@@ -92,7 +92,12 @@ class Process {
 		$post_args  = array(
 			'timeout'  => 1,
 			'blocking' => false,
-			'body'     => $this->callback_args,
+			'body'     => array(
+				$this->identifier => array(
+					'callback_func' => $this->callback_func,
+					'callback_args' => $this->callback_args,
+				),
+			),
 			'cookies'  => $_COOKIE,
 		);
 
