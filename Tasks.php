@@ -178,7 +178,7 @@ class Tasks {
 
 	private function is_running() {
 
-		return get_option( $this->identifier . '_lock' );
+		return get_transient( $this->identifier . '_lock' );
 
 	}
 
@@ -187,7 +187,7 @@ class Tasks {
 
 		$this->start = time();
 
-		update_option( $this->identifier . '_lock', microtime(), false );
+		set_transient( $this->identifier . '_lock', microtime(), HOUR_IN_SECONDS );
 
 	}
 
@@ -196,7 +196,7 @@ class Tasks {
 
 		$this->end = time();
 
-		delete_option( $this->identifier . '_lock' );
+		delete_transient( $this->identifier . '_lock' );
 
 	}
 
