@@ -18,6 +18,7 @@ class Tasks {
 	private $end   = 0;
 	private $limit = 0;
 	private $every = 0;
+	private $total = 0;
 	private $tasks = array();
 
 
@@ -49,11 +50,7 @@ class Tasks {
 			$this->every = 60;
 		}
 
-		if ( $this->every ) {
-			$this->lock = $this->every * 2;
-		} else {
-			$this->lock = count( $this->tasks ) * 60;
-		}
+		$this->total = count( $this->tasks );
 
 	}
 
@@ -64,19 +61,18 @@ class Tasks {
 			wp_die();
 		}
 
+		$this->tasks = get_option( $identifier . '_tasks', array() );
+
 		$this->set_defaults();
 		$this->lock();
 
-		$this->tasks = get_option( $identifier . '_tasks', array() );
-
 		$done  = array();
 		$index = 0;
-		$total = count( $this->tasks );
-		$limit = $this->limit ?: $total;
+		$limit = $this->limit ?: $this->total;
 
-		if ( $limit > $total ) {
-			$limit = $total;
-		} elseif ( $limit < $total ) {
+		if ( $limit >= $this->total ) {
+			$limit = $this->total;
+		} else {
 			$this->schedule();
 		}
 
@@ -99,7 +95,7 @@ class Tasks {
 		$this->unlock();
 		$this->_report( $done );
 
-		if ( $index >= $total ) {
+		if ( $index >= $this->total ) {
 			$this->complete();
 		}
 
@@ -160,12 +156,10 @@ class Tasks {
 		$this->set_defaults();
 
 		if ( $this->limit ) {
-			$interval = $this->every;
-
 			$schedules[ $this->identifier . '_interval' ] = array(
-				'interval' => $interval,
+				'interval' => $this->every,
 				/* translators: %s: number of seconds */
-				'display'  => sprintf( __( 'Every %d Seconds' ), $interval ),
+				'display'  => sprintf( __( 'Every %d Seconds' ), $this->every ),
 			);
 		}
 
@@ -194,7 +188,13 @@ class Tasks {
 
 		$this->start = time();
 
-		set_transient( $this->identifier . '_lock', $this->start, $this->lock );
+		if ( $this->every ) {
+			$timeout = $this->every * 2;
+		} else {
+			$timeout = $this->total * 60;
+		}
+
+		set_transient( $this->identifier . '_lock', $this->start, $timeout );
 
 	}
 
