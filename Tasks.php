@@ -210,8 +210,8 @@ class Tasks {
 
 	private function schedule() {
 
-		if ( ! wp_next_scheduled( $this->identifier . '_event', (array) $this->identifier ) ) {
-			wp_schedule_event( $this->start + $this->every, $this->identifier . '_interval', $this->identifier . '_event', (array) $this->identifier );
+		if ( ! wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) ) ) {
+			wp_schedule_event( $this->start + $this->every, $this->identifier . '_interval', $this->identifier . '_event', array( $this->identifier ) );
 		}
 
 	}
@@ -219,10 +219,10 @@ class Tasks {
 
 	private function complete() {
 
-		$timestamp = wp_next_scheduled( $this->identifier . '_event', (array) $this->identifier );
+		$timestamp = wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) );
 
 		if ( $timestamp ) {
-			wp_unschedule_event( $timestamp, $this->identifier . '_event', (array) $this->identifier );
+			wp_unschedule_event( $timestamp, $this->identifier . '_event', array( $this->identifier ) );
 		}
 
 		delete_option( $this->identifier . '_tasks' );
