@@ -83,7 +83,7 @@ class Process {
 
 	public function dispatch( $custom_url = null ) {
 
-		$post_url  = $custom_url ?? admin_url( 'admin-ajax.php' );
+		$post_url  = $custom_url ?: admin_url( 'admin-ajax.php' );
 		$post_args = array(
 			'timeout'   => 1,
 			'blocking'  => false,
