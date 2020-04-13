@@ -85,9 +85,9 @@ class Process {
 
 		$post_url  = $custom_url ?? admin_url( 'admin-ajax.php' );
 		$post_args = array(
-			'timeout'  => 1,
-			'blocking' => false,
-			'body'     => array(
+			'timeout'   => 1,
+			'blocking'  => false,
+			'body'      => array(
 				'action' => $this->identifier,
 				'nonce'  => wp_create_nonce( $this->identifier ),
 				'data'   => array(
@@ -95,7 +95,8 @@ class Process {
 					'callback_args' => $this->callback_args,
 				),
 			),
-			'cookies'  => $_COOKIE,
+			'cookies'   => $_COOKIE,
+			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 
 		return wp_remote_post( esc_url_raw( $post_url ), $post_args );
