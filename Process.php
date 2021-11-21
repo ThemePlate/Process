@@ -11,17 +11,29 @@ namespace ThemePlate;
 
 class Process {
 
-	private static $storage = array();
-	private $identifier;
+	private static array $storage = array();
+	private string $identifier;
+	/**
+	 * @var callable
+	 */
 	private $callback_func;
-	private $callback_args;
+	private array $callback_args;
+	/**
+	 * @var callable
+	 */
 	private $success_callback;
+	/**
+	 * @var callable
+	 */
 	private $error_callback;
+	/**
+	 * @var mixed
+	 */
 	private $success_output;
-	private $error_output;
+	private string $error_output;
 
 
-	public function __construct( $callback_func, $callback_args = null ) {
+	public function __construct( callable $callback_func, array $callback_args = array() ) {
 
 		$this->callback_func = $callback_func;
 		$this->callback_args = $callback_args;
@@ -34,7 +46,7 @@ class Process {
 	}
 
 
-	private function generate_identifier() {
+	private function generate_identifier(): void {
 
 		$cb_func = print_r( $this->callback_func, true );
 		$cb_args = print_r( $this->callback_args, true );
@@ -55,20 +67,20 @@ class Process {
 	}
 
 
-	public function get_identifier() {
+	public function get_identifier(): string {
 
 		return $this->identifier;
 
 	}
 
 
-	public function handle() {
+	public function handle(): void {
 
 		session_write_close();
 
 		if ( wp_verify_nonce( $_REQUEST['nonce'], $this->identifier ) ) {
 			try {
-				$this->success_output = call_user_func_array( $this->callback_func, (array) $this->callback_args );
+				$this->success_output = call_user_func_array( $this->callback_func, $this->callback_args );
 			} catch ( \Exception $e ) {
 				$this->error_output = $e->getMessage();
 			} finally {
@@ -81,7 +93,7 @@ class Process {
 	}
 
 
-	public function dispatch( $custom_url = null ) {
+	public function dispatch( string $custom_url = null ) {
 
 		$post_url  = $custom_url ?: admin_url( 'admin-ajax.php' );
 		$post_args = array(
@@ -104,7 +116,7 @@ class Process {
 	}
 
 
-	public function then( $callback ) {
+	public function then( callable $callback ): Process {
 
 		$this->success_callback = $callback;
 
@@ -113,7 +125,7 @@ class Process {
 	}
 
 
-	public function catch( $callback ) {
+	public function catch( callable $callback ): Process {
 
 		$this->error_callback = $callback;
 
@@ -122,7 +134,7 @@ class Process {
 	}
 
 
-	private function trigger() {
+	private function trigger(): void {
 
 		if ( $this->error_callback && $this->error_output ) {
 			call_user_func( $this->error_callback, $this->error_output );

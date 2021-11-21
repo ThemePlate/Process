@@ -11,21 +11,24 @@ namespace ThemePlate;
 
 class Tasks {
 
-	private $identifier;
-	private $process;
+	private string $identifier;
+	private Process $process;
+	/**
+	 * @var ?callable
+	 */
 	private $report_callback;
-	private $start = 0;
-	private $end   = 0;
-	private $limit = 0;
-	private $every = 0;
-	private $total = 0;
-	private $tasks = array();
+	private int $start   = 0;
+	private int $end     = 0;
+	private int $limit   = 0;
+	private int $every   = 0;
+	private int $total   = 0;
+	private array $tasks = array();
 
 
-	public function __construct( $identifier ) {
+	public function __construct( string $identifier ) {
 
 		$this->identifier = 'tpt_' . $identifier;
-		$this->process    = new Process( array( $this, 'runner' ), $this->identifier );
+		$this->process    = new Process( array( $this, 'runner' ), array( $this->identifier ) );
 
 		add_action( $this->identifier . '_event', array( $this, 'runner' ) );
 		add_filter( 'cron_schedules', array( $this, 'maybe_schedule' ) );
@@ -33,14 +36,14 @@ class Tasks {
 	}
 
 
-	public function get_identifier() {
+	public function get_identifier(): string {
 
 		return $this->process->get_identifier();
 
 	}
 
 
-	private function set_defaults() {
+	private function set_defaults(): void {
 
 		if ( ! $this->limit && $this->every ) {
 			$this->limit = 1;
@@ -55,7 +58,7 @@ class Tasks {
 	}
 
 
-	public function runner( $identifier ) {
+	public function runner( string $identifier ): void {
 
 		if ( $this->is_running() ) {
 			wp_die();
@@ -115,7 +118,7 @@ class Tasks {
 	}
 
 
-	public function add( $callback_func, $callback_args = array() ) {
+	public function add( callable $callback_func, array $callback_args = array() ): Tasks {
 
 		$this->tasks[] = compact( 'callback_func', 'callback_args' );
 
@@ -124,7 +127,7 @@ class Tasks {
 	}
 
 
-	public function limit( $number ) {
+	public function limit( int $number ): Tasks {
 
 		$this->limit = $number;
 
@@ -133,7 +136,7 @@ class Tasks {
 	}
 
 
-	public function every( $second ) {
+	public function every( int $second ): Tasks {
 
 		$this->every = $second;
 
@@ -142,7 +145,7 @@ class Tasks {
 	}
 
 
-	public function report( $callback ) {
+	public function report( callable $callback ): Tasks {
 
 		$this->report_callback = $callback;
 
@@ -168,7 +171,7 @@ class Tasks {
 	}
 
 
-	private function save() {
+	private function save(): void {
 
 		$tasks = array_values( $this->tasks );
 
@@ -184,7 +187,7 @@ class Tasks {
 	}
 
 
-	private function lock() {
+	private function lock(): void {
 
 		$this->start = time();
 
@@ -199,7 +202,7 @@ class Tasks {
 	}
 
 
-	private function unlock() {
+	private function unlock(): void {
 
 		$this->end = time();
 
@@ -208,7 +211,7 @@ class Tasks {
 	}
 
 
-	private function schedule() {
+	private function schedule(): void {
 
 		if ( ! wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) ) ) {
 			wp_schedule_event( $this->start + $this->every, $this->identifier . '_interval', $this->identifier . '_event', array( $this->identifier ) );
@@ -217,7 +220,7 @@ class Tasks {
 	}
 
 
-	private function complete() {
+	private function complete(): void {
 
 		$timestamp = wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) );
 
@@ -230,7 +233,7 @@ class Tasks {
 	}
 
 
-	private function _report( $done ) {
+	private function _report( array $done ) {
 
 		if ( ! $this->report_callback ) {
 			return null;
