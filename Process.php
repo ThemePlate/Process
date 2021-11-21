@@ -9,6 +9,8 @@
 
 namespace ThemePlate;
 
+use Exception;
+
 class Process {
 
 	private static array $storage = array();
@@ -19,11 +21,11 @@ class Process {
 	private $callback_func;
 	private array $callback_args;
 	/**
-	 * @var callable
+	 * @var ?callable
 	 */
 	private $success_callback;
 	/**
-	 * @var callable
+	 * @var ?callable
 	 */
 	private $error_callback;
 	/**
@@ -48,8 +50,8 @@ class Process {
 
 	private function generate_identifier(): void {
 
-		$cb_func = print_r( $this->callback_func, true );
-		$cb_args = print_r( $this->callback_args, true );
+		$cb_func = print_r( $this->callback_func, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+		$cb_args = print_r( $this->callback_args, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
 
 		$this->identifier = 'tpp_' . md5( $cb_func . $cb_args );
 		$base_identifier  = $this->identifier;
@@ -81,7 +83,7 @@ class Process {
 		if ( wp_verify_nonce( $_REQUEST['nonce'], $this->identifier ) ) {
 			try {
 				$this->success_output = call_user_func_array( $this->callback_func, $this->callback_args );
-			} catch ( \Exception $e ) {
+			} catch ( Exception $e ) {
 				$this->error_output = $e->getMessage();
 			} finally {
 				$this->trigger();

@@ -9,6 +9,8 @@
 
 namespace ThemePlate;
 
+use Exception;
+
 class Tasks {
 
 	private string $identifier;
@@ -31,6 +33,7 @@ class Tasks {
 		$this->process    = new Process( array( $this, 'runner' ), array( $this->identifier ) );
 
 		add_action( $this->identifier . '_event', array( $this, 'runner' ) );
+		// phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
 		add_filter( 'cron_schedules', array( $this, 'maybe_schedule' ) );
 
 	}
@@ -84,7 +87,7 @@ class Tasks {
 
 			try {
 				$output = call_user_func_array( $task['callback_func'], (array) $task['callback_args'] );
-			} catch ( \Exception $e ) {
+			} catch ( Exception $e ) {
 				$output = $e->getMessage();
 			}
 
@@ -96,7 +99,7 @@ class Tasks {
 		}
 
 		$this->unlock();
-		$this->_report( $done );
+		$this->reporter( $done );
 
 		if ( $index >= $this->total ) {
 			$this->complete();
@@ -233,10 +236,10 @@ class Tasks {
 	}
 
 
-	private function _report( array $done ) {
+	private function reporter( array $done ): void {
 
 		if ( ! $this->report_callback ) {
-			return null;
+			return;
 		}
 
 		$output = array(
@@ -245,8 +248,7 @@ class Tasks {
 			'tasks' => $done,
 		);
 
-		return call_user_func( $this->report_callback, $output );
-
+		call_user_func( $this->report_callback, $output );
 	}
 
 }
