@@ -69,6 +69,10 @@ class Tasks {
 
 		$this->tasks = get_option( $identifier . '_tasks', array() );
 
+		if ( ! count( $this->tasks ) ) {
+			wp_die();
+		}
+
 		$this->set_defaults();
 		$this->lock();
 
@@ -86,7 +90,7 @@ class Tasks {
 			$task = $this->tasks[ $index ];
 
 			try {
-				$output = call_user_func_array( $task['callback_func'], (array) $task['callback_args'] );
+				$output = call_user_func_array( $task['callback_func'], $task['callback_args'] );
 			} catch ( Exception $e ) {
 				$output = $e->getMessage();
 			}
@@ -249,6 +253,7 @@ class Tasks {
 		);
 
 		call_user_func( $this->report_callback, $output );
+
 	}
 
 }
