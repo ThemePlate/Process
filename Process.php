@@ -95,7 +95,7 @@ class Process {
 	}
 
 
-	public function dispatch( string $custom_url = null ) {
+	public function dispatch( string $custom_url = null ): bool {
 
 		$post_url  = $custom_url ?: admin_url( 'admin-ajax.php' );
 		$post_args = array(
@@ -113,7 +113,9 @@ class Process {
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
 
-		return wp_remote_post( esc_url_raw( $post_url ), $post_args );
+		$response = wp_remote_post( esc_url_raw( $post_url ), $post_args );
+
+		return is_wp_error( $response );
 
 	}
 

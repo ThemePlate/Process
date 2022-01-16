@@ -108,10 +108,10 @@ class Tasks {
 	}
 
 
-	public function execute() {
+	public function execute(): bool {
 
 		if ( empty( $this->tasks ) ) {
-			return null;
+			return false;
 		}
 
 		$this->save();
