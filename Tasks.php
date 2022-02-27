@@ -16,9 +16,9 @@ class Tasks {
 	private string $identifier;
 	private Process $process;
 	/**
-	 * @var ?callable
+	 * @var callable[]
 	 */
-	private $report_callback;
+	private array $report_callback;
 	private int $start   = 0;
 	private int $end     = 0;
 	private int $limit   = 0;
@@ -154,7 +154,7 @@ class Tasks {
 
 	public function report( callable $callback ): Tasks {
 
-		$this->report_callback = $callback;
+		$this->report_callback[] = $callback;
 
 		return $this;
 
@@ -242,7 +242,7 @@ class Tasks {
 
 	private function reporter( array $done ): void {
 
-		if ( ! $this->report_callback ) {
+		if ( empty( $this->report_callback ) ) {
 			return;
 		}
 
@@ -252,7 +252,9 @@ class Tasks {
 			'tasks' => $done,
 		);
 
-		call_user_func( $this->report_callback, $output );
+		foreach ( $this->report_callback as $report_callback ) {
+			$report_callback( $output );
+		}
 
 	}
 
