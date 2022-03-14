@@ -7,14 +7,14 @@
  * @since 0.1.0
  */
 
-namespace ThemePlate;
+namespace ThemePlate\Process;
 
 use Exception;
 
 class Tasks {
 
 	private string $identifier;
-	private Process $process;
+	private Async $async;
 	/**
 	 * @var callable[]
 	 */
@@ -30,7 +30,7 @@ class Tasks {
 	public function __construct( string $identifier ) {
 
 		$this->identifier = 'tpt_' . $identifier;
-		$this->process    = new Process( array( $this, 'runner' ), array( $this->identifier ) );
+		$this->async      = new Async( array( $this, 'runner' ), array( $this->identifier ) );
 
 		add_action( $this->identifier . '_event', array( $this, 'runner' ) );
 		// phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
@@ -41,7 +41,7 @@ class Tasks {
 
 	public function get_identifier(): string {
 
-		return $this->process->get_identifier();
+		return $this->async->get_identifier();
 
 	}
 
@@ -120,7 +120,7 @@ class Tasks {
 
 		$this->save();
 
-		return $this->process->dispatch();
+		return $this->async->dispatch();
 
 	}
 

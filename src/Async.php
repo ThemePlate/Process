@@ -7,11 +7,11 @@
  * @since 0.1.0
  */
 
-namespace ThemePlate;
+namespace ThemePlate\Process;
 
 use Exception;
 
-class Process {
+class Async {
 
 	private static array $storage = array();
 	private string $identifier;
@@ -53,7 +53,7 @@ class Process {
 		$cb_func = print_r( $this->callback_func, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
 		$cb_args = print_r( $this->callback_args, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
 
-		$this->identifier = 'tpp_' . md5( $cb_func . $cb_args );
+		$this->identifier = 'tpa_' . md5( $cb_func . $cb_args );
 		$base_identifier  = $this->identifier;
 
 		if ( array_key_exists( $this->identifier, self::$storage ) ) {
@@ -120,7 +120,7 @@ class Process {
 	}
 
 
-	public function then( callable $callback ): Process {
+	public function then( callable $callback ): Async {
 
 		$this->success_callback = $callback;
 
@@ -129,7 +129,7 @@ class Process {
 	}
 
 
-	public function catch( callable $callback ): Process {
+	public function catch( callable $callback ): Async {
 
 		$this->error_callback = $callback;
 
