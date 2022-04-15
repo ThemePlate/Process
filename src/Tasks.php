@@ -246,14 +246,8 @@ class Tasks {
 			return;
 		}
 
-		$output = array(
-			'start' => $this->start,
-			'end'   => $this->end,
-			'tasks' => $done,
-		);
-
 		foreach ( $this->report_callback as $report_callback ) {
-			$report_callback( $output );
+			$report_callback( new Report( $done, $this->start, $this->end ) );
 		}
 
 	}
