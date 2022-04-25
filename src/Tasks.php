@@ -35,6 +35,7 @@ class Tasks {
 		add_action( $this->identifier . '_event', array( $this, 'runner' ) );
 		// phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
 		add_filter( 'cron_schedules', array( $this, 'maybe_schedule' ) );
+		add_action( 'init', array( $this, 'maybe_run' ) );
 
 	}
 
@@ -178,6 +179,17 @@ class Tasks {
 	}
 
 
+	public function maybe_run(): void {
+
+		$tasks = get_option( $this->identifier . '_tasks', array() );
+
+		if ( count( $tasks ) && ! $this->next_scheduled() && ! $this->is_running() ) {
+			$this->runner( $this->identifier );
+		}
+
+	}
+
+
 	private function save(): void {
 
 		$tasks = array_values( $this->tasks );
@@ -218,9 +230,16 @@ class Tasks {
 	}
 
 
+	private function next_scheduled(): int {
+
+		return wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) );
+
+	}
+
+
 	private function schedule(): void {
 
-		if ( ! wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) ) ) {
+		if ( ! $this->next_scheduled() ) {
 			wp_schedule_event( $this->start + $this->every, $this->identifier . '_interval', $this->identifier . '_event', array( $this->identifier ) );
 		}
 
@@ -229,7 +248,7 @@ class Tasks {
 
 	private function complete(): void {
 
-		$timestamp = wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) );
+		$timestamp = $this->next_scheduled();
 
 		if ( $timestamp ) {
 			wp_unschedule_event( $timestamp, $this->identifier . '_event', array( $this->identifier ) );
