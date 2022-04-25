@@ -36,6 +36,7 @@ class Tasks {
 		// phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
 		add_filter( 'cron_schedules', array( $this, 'maybe_schedule' ) );
 		add_action( 'init', array( $this, 'maybe_run' ) );
+		add_action( 'shutdown', array( $this, 'execute' ) );
 
 	}
 
@@ -109,6 +110,8 @@ class Tasks {
 		if ( $index >= $this->total ) {
 			$this->complete();
 		}
+
+		remove_action( 'shutdown', array( $this, 'execute' ) );
 
 	}
 
