@@ -65,13 +65,13 @@ class Tasks {
 	public function runner( string $identifier ): void {
 
 		if ( $this->is_running() ) {
-			wp_die();
+			return;
 		}
 
 		$this->tasks = get_option( $identifier . '_tasks', array() );
 
 		if ( ! count( $this->tasks ) ) {
-			wp_die();
+			return;
 		}
 
 		$this->set_defaults();
