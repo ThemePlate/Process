@@ -69,7 +69,7 @@ class Tasks {
 			return;
 		}
 
-		$this->tasks = get_option( $identifier . '_tasks', array() );
+		$this->tasks = $this->get_queued( $identifier );
 
 		if ( ! count( $this->tasks ) ) {
 			return;
@@ -184,9 +184,7 @@ class Tasks {
 
 	public function maybe_run(): void {
 
-		$tasks = get_option( $this->identifier . '_tasks', array() );
-
-		if ( count( $tasks ) && ! $this->next_scheduled() && ! $this->is_running() ) {
+		if ( $this->has_queued() && ! $this->next_scheduled() && ! $this->is_running() ) {
 			$this->runner( $this->identifier );
 		}
 
@@ -197,7 +195,7 @@ class Tasks {
 
 		$tasks = array_values( $this->tasks );
 
-		update_option( $this->identifier . '_tasks', $tasks, false );
+		update_option( $this->generate_key(), $tasks, false );
 
 	}
 
@@ -271,6 +269,38 @@ class Tasks {
 		foreach ( $this->report_callback as $report_callback ) {
 			$report_callback( new Report( $done, $this->start, $this->end ) );
 		}
+
+	}
+
+
+	private function generate_key(): string {
+
+		return $this->identifier . '_tasks_' . microtime( true );
+
+	}
+
+
+	private function has_queued(): bool {
+
+		global $wpdb;
+
+		$key = $wpdb->esc_like( $this->identifier . '_tasks_' ) . '%';
+		$sql = "SELECT COUNT(*) FROM $wpdb->options WHERE `option_name` LIKE %s";
+
+		return $wpdb->get_var( $wpdb->prepare( $sql, $key ) ) > 0; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+	}
+
+
+	private function get_queued( string $identifier ): array {
+
+		global $wpdb;
+
+		$key = $wpdb->esc_like( $identifier . '_tasks_' ) . '%';
+		$sql = "SELECT * FROM $wpdb->options WHERE `option_name` LIKE %s ORDER BY `option_id` ASC LIMIT 1";
+		$row = $wpdb->get_row( $wpdb->prepare( $sql, $key ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		return maybe_unserialize( $row->option_value );
 
 	}
 
