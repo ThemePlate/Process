@@ -65,7 +65,7 @@ class Tasks {
 
 	public function runner( string $identifier ): void {
 
-		if ( $this->is_running() ) {
+		if ( $this->is_running() || ! $this->has_queued() ) {
 			return;
 		}
 
@@ -253,7 +253,7 @@ class Tasks {
 	}
 
 
-	private function complete( string $key ): void {
+	private function unschedule(): void {
 
 		$timestamp = $this->next_scheduled();
 
@@ -261,7 +261,16 @@ class Tasks {
 			wp_unschedule_event( $timestamp, $this->identifier . '_event', array( $this->identifier ) );
 		}
 
+	}
+
+
+	private function complete( string $key ): void {
+
 		delete_option( $key );
+
+		if ( ! $this->has_queued() ) {
+			$this->unschedule();
+		}
 
 	}
 
