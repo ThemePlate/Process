@@ -69,7 +69,9 @@ class Tasks {
 			return;
 		}
 
-		$this->tasks = $this->get_queued( $identifier );
+		$queued = $this->get_queued( $identifier );
+
+		$this->tasks = $queued['tasks'];
 
 		if ( ! count( $this->tasks ) ) {
 			return;
@@ -100,7 +102,7 @@ class Tasks {
 			$done[ $index ] = compact( 'task', 'output' );
 
 			unset( $this->tasks[ $index ] );
-			$this->save();
+			$this->save( $queued['key'] );
 			$index++;
 		}
 
@@ -108,7 +110,7 @@ class Tasks {
 		$this->reporter( $done );
 
 		if ( $index >= $this->total ) {
-			$this->complete();
+			$this->complete( $queued['key'] );
 		}
 
 		remove_action( 'shutdown', array( $this, 'execute' ) );
@@ -191,11 +193,15 @@ class Tasks {
 	}
 
 
-	private function save(): void {
+	private function save( string $key = null ): void {
 
 		$tasks = array_values( $this->tasks );
 
-		update_option( $this->generate_key(), $tasks, false );
+		if ( null === $key ) {
+			$key = $this->generate_key();
+		}
+
+		update_option( $key, $tasks, false );
 
 	}
 
@@ -247,7 +253,7 @@ class Tasks {
 	}
 
 
-	private function complete(): void {
+	private function complete( string $key ): void {
 
 		$timestamp = $this->next_scheduled();
 
@@ -255,7 +261,7 @@ class Tasks {
 			wp_unschedule_event( $timestamp, $this->identifier . '_event', array( $this->identifier ) );
 		}
 
-		delete_option( $this->identifier . '_tasks' );
+		delete_option( $key );
 
 	}
 
@@ -300,7 +306,10 @@ class Tasks {
 		$sql = "SELECT * FROM $wpdb->options WHERE `option_name` LIKE %s ORDER BY `option_id` ASC LIMIT 1";
 		$row = $wpdb->get_row( $wpdb->prepare( $sql, $key ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		return maybe_unserialize( $row->option_value );
+		return array(
+			'key'   => $row->option_name,
+			'tasks' => maybe_unserialize( $row->option_value ),
+		);
 
 	}
 
