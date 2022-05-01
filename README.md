@@ -3,10 +3,10 @@
 ## Usage
 
 ```php
-use ThemePlate\Process;
+use ThemePlate\Process\Async;
 
 // Instantiate
-$background = new Process( function() {
+$background = new Async( function() {
 	long_running_task();
 } );
 
@@ -14,14 +14,14 @@ $background = new Process( function() {
 $background->dispatch();
 ```
 
-### new Process( $callback_func, $callback_args )
+### new Async( $callback_func, $callback_args )
 
 Execute a heavy one-off task via a non-blocking request
 
 - **$callback_func** *(callable)(Required)* Function to run asynchronously
 - **$callback_args** *(array)(Optional)* Parameters to pass in the callback. Default `null`
 
-### ->dispath()
+### ->dispatch()
 
 Fire off the process in the background instantly
 
@@ -35,7 +35,7 @@ Chainable methods to handle success or error
 ---
 
 ```php
-use ThemePlate\Tasks;
+use ThemePlate\Process\Tasks;
 
 $chores = new Tasks( 'my_day' );
 
@@ -43,8 +43,6 @@ $chores->add( 'first_task', array( 'this', 'that' ) );
 $chores->add( function() {
 	another_task();
 } );
-
-$chores->execute();
 ```
 
 ### new Tasks( $identifier )
