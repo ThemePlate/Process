@@ -99,7 +99,7 @@ class Async {
 
 		$post_url  = $custom_url ?: admin_url( 'admin-ajax.php' );
 		$post_args = array(
-			'timeout'   => 1,
+			'timeout'   => defined( 'PROCESS_ASYNC_TIMEOUT' ) ? PROCESS_ASYNC_TIMEOUT : 1,
 			'blocking'  => false,
 			'body'      => array(
 				'action' => $this->identifier,
