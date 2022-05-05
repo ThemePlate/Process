@@ -54,6 +54,15 @@ $chores->add( function() {
 - **$callback_func** *(callable)(Required)* Function to run
 - **$callback_args** *(array)(Optional)* Parameters to pass. Default `null`
 
+### ->remove( $callback_func, $callback_args )
+
+- **$callback_func** *(callable)(Required)* Supposed function to run
+- **$callback_args** *(array)(Optional)* The parameters passed. Default `null`
+
+### ->clear()
+
+Remove all currently listed task
+
 ### ->limit( $number )
 
 - **$number** *(int)(Required)* Number of task per run
