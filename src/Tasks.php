@@ -60,6 +60,10 @@ class Tasks {
 
 		$this->total = count( $this->tasks );
 
+		if ( ! $this->limit || $this->limit > $this->total ) {
+			$this->limit = $this->total;
+		}
+
 	}
 
 
@@ -82,15 +86,12 @@ class Tasks {
 
 		$done  = array();
 		$index = 0;
-		$limit = $this->limit ?: $this->total;
 
-		if ( $limit >= $this->total ) {
-			$limit = $this->total;
-		} else {
+		if ( $this->limit < $this->total ) {
 			$this->schedule();
 		}
 
-		while ( $index < $limit ) {
+		while ( $index < $this->limit ) {
 			$task = $this->tasks[ $index ];
 
 			try {
