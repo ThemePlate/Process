@@ -140,6 +140,28 @@ class Tasks {
 	}
 
 
+	public function remove( callable $callback_func, array $callback_args = array() ): Tasks {
+
+		$index = array_search( compact( 'callback_func', 'callback_args' ), $this->tasks, true );
+
+		if ( false !== $index ) {
+			unset( $this->tasks[ $index ] );
+		}
+
+		return $this;
+
+	}
+
+
+	public function clear(): Tasks {
+
+		$this->tasks = array();
+
+		return $this;
+
+	}
+
+
 	public function limit( int $number ): Tasks {
 
 		$this->limit = $number;
