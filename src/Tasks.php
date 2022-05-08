@@ -35,8 +35,12 @@ class Tasks {
 		add_action( $this->identifier . '_event', array( $this, 'runner' ) );
 		// phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
 		add_filter( 'cron_schedules', array( $this, 'maybe_schedule' ) );
-		add_action( 'init', array( $this, 'maybe_run' ) );
-		add_action( 'shutdown', array( $this, 'execute' ) );
+
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( ! wp_doing_ajax() || $_REQUEST['action'] !== $this->get_identifier() ) {
+			add_action( 'init', array( $this, 'maybe_run' ) );
+			add_action( 'shutdown', array( $this, 'execute' ) );
+		}
 
 	}
 
@@ -113,8 +117,6 @@ class Tasks {
 		if ( $index >= $this->total ) {
 			$this->complete( $queued['key'] );
 		}
-
-		remove_action( 'shutdown', array( $this, 'execute' ) );
 
 	}
 
