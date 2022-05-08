@@ -62,12 +62,6 @@ class Tasks {
 			$this->every = 60;
 		}
 
-		$this->total = count( $this->tasks );
-
-		if ( ! $this->limit || $this->limit > $this->total ) {
-			$this->limit = $this->total;
-		}
-
 	}
 
 
@@ -78,23 +72,25 @@ class Tasks {
 		}
 
 		$queued = $this->get_queued( $identifier );
+		$total  = count( $queued['tasks'] );
 
-		$this->tasks = $queued['tasks'];
-
-		if ( ! count( $this->tasks ) ) {
+		if ( ! $total ) {
 			delete_option( $queued['key'] );
 			return;
 		}
 
 		$this->set_defaults();
 		$this->lock();
+		$this->schedule();
 
 		$done  = array();
 		$index = 0;
 
-		if ( $this->limit < $this->total ) {
-			$this->schedule();
+		if ( ! $this->limit || $this->limit > $total ) {
+			$this->limit = $total;
 		}
+
+		$this->tasks = $queued['tasks'];
 
 		while ( $index < $this->limit ) {
 			$task = $this->tasks[ $index ];
@@ -200,8 +196,6 @@ class Tasks {
 
 	public function maybe_schedule( $schedules ) {
 
-		$this->set_defaults();
-
 		if ( $this->limit ) {
 			$schedules[ $this->identifier . '_interval' ] = array(
 				'interval' => $this->every,
@@ -251,7 +245,7 @@ class Tasks {
 		if ( $this->every ) {
 			$timeout = $this->every * 2;
 		} else {
-			$timeout = $this->total * 60;
+			$timeout = 2 * MINUTE_IN_SECONDS;
 		}
 
 		set_transient( $this->identifier . '_lock', $this->start, $timeout );
@@ -278,7 +272,12 @@ class Tasks {
 	private function schedule(): void {
 
 		if ( ! $this->next_scheduled() ) {
-			wp_schedule_event( $this->start + $this->every, $this->identifier . '_interval', $this->identifier . '_event', array( $this->identifier ) );
+			wp_schedule_event(
+				$this->start + $this->every,
+				$this->identifier . '_interval',
+				$this->identifier . '_event',
+				array( $this->identifier )
+			);
 		}
 
 	}
