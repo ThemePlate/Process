@@ -23,7 +23,6 @@ class Tasks {
 	private int $end     = 0;
 	private int $limit   = 0;
 	private int $every   = 0;
-	private int $total   = 0;
 	private array $tasks = array();
 
 
@@ -75,7 +74,7 @@ class Tasks {
 		$total  = count( $queued['tasks'] );
 
 		if ( ! $total ) {
-			delete_option( $queued['key'] );
+			$this->delete( $queued['key'] );
 			return;
 		}
 
@@ -90,10 +89,8 @@ class Tasks {
 			$this->limit = $total;
 		}
 
-		$this->tasks = $queued['tasks'];
-
 		while ( $index < $this->limit ) {
-			$task = $this->tasks[ $index ];
+			$task = $queued['tasks'][ $index ];
 
 			try {
 				$output = call_user_func_array( $task['callback_func'], $task['callback_args'] );
@@ -103,13 +100,13 @@ class Tasks {
 
 			$done[ $index ] = compact( 'task', 'output' );
 
-			unset( $this->tasks[ $index ] );
+			unset( $queued['tasks'][ $index ] );
 			$index ++;
 
-			if ( empty( $this->tasks ) ) {
-				delete_option( $queued['key'] );
+			if ( empty( $queued['tasks'] ) ) {
+				$this->delete( $queued['key'] );
 			} else {
-				$this->save( $queued['key'] );
+				$this->save( $queued['tasks'], $queued['key'] );
 			}
 		}
 
@@ -129,7 +126,7 @@ class Tasks {
 			return false;
 		}
 
-		$this->save();
+		$this->save( $this->tasks );
 
 		return $this->async->dispatch();
 
@@ -218,15 +215,20 @@ class Tasks {
 	}
 
 
-	private function save( string $key = null ): void {
-
-		$tasks = array_values( $this->tasks );
+	private function save( array $tasks, string $key = null ): void {
 
 		if ( null === $key ) {
 			$key = $this->generate_key();
 		}
 
-		update_option( $key, $tasks, false );
+		update_option( $key, array_values( $tasks ), false );
+
+	}
+
+
+	private function delete( string $key ): void {
+
+		delete_option( $key );
 
 	}
 
@@ -296,7 +298,7 @@ class Tasks {
 
 	private function complete( string $key ): void {
 
-		delete_option( $key );
+		$this->delete( $key );
 
 		if ( ! $this->has_queued() ) {
 			$this->unschedule();
