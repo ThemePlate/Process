@@ -82,6 +82,7 @@ class Tasks {
 		$this->tasks = $queued['tasks'];
 
 		if ( ! count( $this->tasks ) ) {
+			delete_option( $queued['key'] );
 			return;
 		}
 
