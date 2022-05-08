@@ -37,7 +37,7 @@ class Tasks {
 		add_filter( 'cron_schedules', array( $this, 'maybe_schedule' ) );
 
 		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( ! wp_doing_ajax() || $_REQUEST['action'] !== $this->get_identifier() ) {
+		if ( ! wp_doing_cron() && ( ! wp_doing_ajax() || $_REQUEST['action'] !== $this->get_identifier() ) ) {
 			add_action( 'init', array( $this, 'maybe_run' ) );
 			add_action( 'shutdown', array( $this, 'execute' ) );
 		}
@@ -107,14 +107,19 @@ class Tasks {
 			$done[ $index ] = compact( 'task', 'output' );
 
 			unset( $this->tasks[ $index ] );
-			$this->save( $queued['key'] );
-			$index++;
+			$index ++;
+
+			if ( empty( $this->tasks ) ) {
+				delete_option( $queued['key'] );
+			} else {
+				$this->save( $queued['key'] );
+			}
 		}
 
 		$this->unlock();
 		$this->reporter( $done );
 
-		if ( $index >= $this->total ) {
+		if ( ! $this->has_queued() ) {
 			$this->complete( $queued['key'] );
 		}
 
