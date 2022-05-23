@@ -9,12 +9,14 @@ namespace ThemePlate\Process;
 
 class Report {
 
-	public $data;
+	public array $data;
 	public int $start;
 	public int $end;
 
+	public const DATE_FORMAT = 'Y-m-d H:i:s';
 
-	public function __construct( $data, int $start, int $end ) {
+
+	public function __construct( array $data, int $start, int $end ) {
 
 		$this->data  = $data;
 		$this->start = $start;
@@ -27,9 +29,10 @@ class Report {
 
 		$lines = array();
 
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 		$lines[] = 'Tasks: ' . print_r( $this->data, true );
-		$lines[] = 'Start: ' . gmdate( 'Y-m-d H:i:s', $this->start );
-		$lines[] = 'End: ' . gmdate( 'Y-m-d H:i:s', $this->end );
+		$lines[] = 'Start: ' . gmdate( self::DATE_FORMAT, $this->start );
+		$lines[] = 'End: ' . gmdate( self::DATE_FORMAT, $this->end );
 
 		return implode( "\n", $lines );
 
