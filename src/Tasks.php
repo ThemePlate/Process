@@ -9,16 +9,18 @@
 
 namespace ThemePlate\Process;
 
-use Exception;
+use Throwable;
 
 class Tasks {
 
 	private string $identifier;
 	private Async $async;
+
 	/**
 	 * @var callable[]
 	 */
-	private array $report_callback;
+	private array $report_callback = array();
+
 	private int $start   = 0;
 	private int $end     = 0;
 	private int $limit   = 0;
@@ -94,7 +96,7 @@ class Tasks {
 
 			try {
 				$output = call_user_func_array( $task['callback_func'], $task['callback_args'] );
-			} catch ( Exception $e ) {
+			} catch ( Throwable $e ) {
 				$output = $e->getMessage();
 			}
 

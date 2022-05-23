@@ -9,7 +9,7 @@
 
 namespace ThemePlate\Process;
 
-use Exception;
+use Throwable;
 
 class Async {
 
@@ -32,7 +32,7 @@ class Async {
 	 * @var mixed
 	 */
 	private $success_output;
-	private string $error_output;
+	private string $error_output = '';
 
 
 	public function __construct( callable $callback_func, array $callback_args = array() ) {
@@ -83,7 +83,7 @@ class Async {
 		if ( wp_verify_nonce( $_REQUEST['nonce'], $this->identifier ) ) {
 			try {
 				$this->success_output = call_user_func_array( $this->callback_func, $this->callback_args );
-			} catch ( Exception $e ) {
+			} catch ( Throwable $e ) {
 				$this->error_output = $e->getMessage();
 			} finally {
 				$this->trigger();
