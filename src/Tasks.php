@@ -129,8 +129,9 @@ class Tasks {
 		}
 
 		$this->save( $this->tasks );
+		$this->clear();
 
-		return $this->async->dispatch();
+		return ! $this->async->dispatch();
 
 	}
 
