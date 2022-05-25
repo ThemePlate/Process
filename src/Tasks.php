@@ -116,7 +116,7 @@ class Tasks {
 		$this->reporter( $done );
 
 		if ( ! $this->has_queued() ) {
-			$this->complete( $queued['key'] );
+			$this->unschedule();
 		}
 
 	}
@@ -294,17 +294,6 @@ class Tasks {
 
 		if ( $timestamp ) {
 			wp_unschedule_event( $timestamp, $this->identifier . '_event', array( $this->identifier ) );
-		}
-
-	}
-
-
-	private function complete( string $key ): void {
-
-		$this->delete( $key );
-
-		if ( ! $this->has_queued() ) {
-			$this->unschedule();
 		}
 
 	}
