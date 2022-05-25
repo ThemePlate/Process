@@ -68,11 +68,13 @@ class Tasks {
 
 	public function runner( string $identifier ): void {
 
+		$this->identifier = $identifier;
+
 		if ( $this->is_running() || ! $this->has_queued() ) {
 			return;
 		}
 
-		$queued = $this->get_queued( $identifier );
+		$queued = $this->get_queued();
 		$total  = count( $queued['tasks'] );
 
 		if ( ! $total ) {
@@ -331,11 +333,11 @@ class Tasks {
 	}
 
 
-	private function get_queued( string $identifier ): array {
+	private function get_queued(): array {
 
 		global $wpdb;
 
-		$key = $wpdb->esc_like( $identifier . '_tasks_' ) . '%';
+		$key = $wpdb->esc_like( $this->identifier . '_tasks_' ) . '%';
 		$sql = "SELECT * FROM $wpdb->options WHERE `option_name` LIKE %s ORDER BY `option_id` ASC LIMIT 1";
 		$row = $wpdb->get_row( $wpdb->prepare( $sql, $key ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
