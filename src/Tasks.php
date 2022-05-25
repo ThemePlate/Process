@@ -238,7 +238,7 @@ class Tasks {
 	}
 
 
-	private function is_running() {
+	public function is_running() {
 
 		return get_transient( $this->identifier . '_lock' );
 
@@ -269,7 +269,7 @@ class Tasks {
 	}
 
 
-	private function next_scheduled(): int {
+	public function next_scheduled(): int {
 
 		return wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) );
 
@@ -321,7 +321,7 @@ class Tasks {
 	}
 
 
-	private function has_queued(): bool {
+	public function has_queued(): bool {
 
 		global $wpdb;
 
@@ -333,7 +333,7 @@ class Tasks {
 	}
 
 
-	private function get_queued(): array {
+	public function get_queued(): array {
 
 		global $wpdb;
 
