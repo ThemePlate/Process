@@ -74,3 +74,11 @@ Remove all currently listed task
 ### ->report( $callback )
 
 - **$callback** *(callable)(Required)* To run after completion
+
+### Helper methods
+#### ->get_identifier()
+#### ->dump()
+#### ->is_running()
+#### ->next_scheduled()
+#### ->has_queued()
+#### ->get_queued()
