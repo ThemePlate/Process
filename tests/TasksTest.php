@@ -69,6 +69,7 @@ class TasksTest extends WP_UnitTestCase {
 	protected function execute_runner(): void {
 		$this->tasks->execute();
 		$this->tasks->runner( $this->identifier );
+		do_action( $this->identifier . '_event', $this->identifier ); // Cleanup queue
 		$this->assertTrue( true );
 	}
 
@@ -120,7 +121,6 @@ class TasksTest extends WP_UnitTestCase {
 		}
 
 		$this->execute_runner();
-		do_action( $this->identifier . '_event', $this->identifier );
 	}
 
 	public function test_runner_with_schedule_via_every(): void {
@@ -129,7 +129,6 @@ class TasksTest extends WP_UnitTestCase {
 		}
 
 		$this->execute_runner();
-		do_action( $this->identifier . '_event', $this->identifier );
 	}
 
 	public function test_runner_already_running_is_skipped(): void {

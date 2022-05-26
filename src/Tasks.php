@@ -173,6 +173,8 @@ class Tasks {
 
 		$this->limit = $number;
 
+		$this->set_defaults();
+
 		return $this;
 
 	}
@@ -181,6 +183,8 @@ class Tasks {
 	public function every( int $second ): Tasks {
 
 		$this->every = $second;
+
+		$this->set_defaults();
 
 		return $this;
 
@@ -197,6 +201,8 @@ class Tasks {
 
 
 	public function dump(): array {
+
+		$this->set_defaults();
 
 		return array(
 			'limit'  => $this->limit,
