@@ -196,6 +196,18 @@ class Tasks {
 	}
 
 
+	public function dump(): array {
+
+		return array(
+			'limit'  => $this->limit,
+			'every'  => $this->every,
+			'tasks'  => $this->tasks,
+			'report' => $this->report_callback,
+		);
+
+	}
+
+
 	public function maybe_schedule( $schedules ) {
 
 		if ( $this->limit ) {
