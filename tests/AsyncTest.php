@@ -32,7 +32,7 @@ class AsyncTest extends WP_Ajax_UnitTestCase {
 
 	public function test_handle_and_dispatch(): void {
 		$async = new Async(
-			function() {
+			function () {
 				microtime();
 			}
 		);

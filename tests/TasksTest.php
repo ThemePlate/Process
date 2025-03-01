@@ -44,7 +44,7 @@ class TasksTest extends WP_UnitTestCase {
 	}
 
 	public function test_removing_previously_added(): void {
-		$callback = function() {
+		$callback = function () {
 			microtime();
 		};
 
