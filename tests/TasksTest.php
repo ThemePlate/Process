@@ -29,7 +29,6 @@ class TasksTest extends WP_UnitTestCase {
 	}
 
 	public function test_instantiating_class_add_hooks(): void {
-		$this->assertIsString( $this->tasks->get_identifier() );
 		$this->assertSame( 10, has_action( $this->identifier . '_event', array( $this->tasks, 'runner' ) ) );
 		$this->assertSame( 10, has_filter( 'cron_schedules', array( $this->tasks, 'maybe_schedule' ) ) );
 	}
@@ -61,7 +60,7 @@ class TasksTest extends WP_UnitTestCase {
 
 	public function test_maybe_run(): void {
 		do_action( 'init' );
-		$this->assertTrue( true );
+		$this->expectNotToPerformAssertions();
 	}
 
 	public function tasks_callback( $output ): void {
@@ -72,7 +71,6 @@ class TasksTest extends WP_UnitTestCase {
 		$this->tasks->execute();
 		$this->tasks->runner( $this->identifier );
 		do_action( $this->identifier . '_event', $this->identifier ); // Cleanup queue
-		$this->assertTrue( true );
 	}
 
 	public function test_limit_every_report_dump(): void {
@@ -100,7 +98,6 @@ class TasksTest extends WP_UnitTestCase {
 			->add( $tasks[2]['callback_func'], $tasks[2]['callback_args'] )
 			->limit( $limit )->every( $every )->report( $report )->dump();
 
-		$this->assertIsArray( $data );
 		$this->assertArrayHasKey( 'limit', $data );
 		$this->assertArrayHasKey( 'every', $data );
 		$this->assertArrayHasKey( 'tasks', $data );
@@ -115,6 +112,7 @@ class TasksTest extends WP_UnitTestCase {
 	public function test_runner_no_schedule(): void {
 		$this->tasks->add( 'uniqid' );
 		$this->execute_runner();
+		$this->expectNotToPerformAssertions();
 	}
 
 	public function test_runner_with_schedule_via_limit(): void {
@@ -123,6 +121,7 @@ class TasksTest extends WP_UnitTestCase {
 		}
 
 		$this->execute_runner();
+		$this->expectNotToPerformAssertions();
 	}
 
 	public function test_runner_with_schedule_via_every(): void {
@@ -131,6 +130,7 @@ class TasksTest extends WP_UnitTestCase {
 		}
 
 		$this->execute_runner();
+		$this->expectNotToPerformAssertions();
 	}
 
 	public function test_runner_already_running_is_skipped(): void {
@@ -139,6 +139,8 @@ class TasksTest extends WP_UnitTestCase {
 		$tasks->expects( self::never() )->method( 'get_queued' );
 		$tasks->expects( self::once() )->method( 'is_running' )->willReturn( time() );
 
+		/** @var Tasks $tasks */
+		// @phpstan-ignore varTag.nativeType
 		$tasks->runner( $this->identifier );
 	}
 
@@ -148,6 +150,8 @@ class TasksTest extends WP_UnitTestCase {
 		$tasks->expects( self::never() )->method( 'get_queued' );
 		$tasks->expects( self::once() )->method( 'has_queued' )->willReturn( false );
 
+		/** @var Tasks $tasks */
+		// @phpstan-ignore varTag.nativeType
 		$tasks->runner( $this->identifier );
 	}
 
@@ -163,6 +167,8 @@ class TasksTest extends WP_UnitTestCase {
 			)
 		);
 
+		/** @var Tasks $tasks */
+		// @phpstan-ignore varTag.nativeType
 		$tasks->runner( $this->identifier );
 	}
 }

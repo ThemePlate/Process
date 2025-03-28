@@ -237,7 +237,7 @@ class Tasks {
 	}
 
 
-	private function save( array $tasks, string $key = null ): void {
+	private function save( array $tasks, ?string $key = null ): void {
 
 		if ( null === $key ) {
 			$key = $this->generate_key();
@@ -319,10 +319,6 @@ class Tasks {
 
 
 	private function reporter( array $done ): void {
-
-		if ( empty( $this->report_callback ) ) {
-			return;
-		}
 
 		foreach ( $this->report_callback as $report_callback ) {
 			$report_callback( new Report( $done, $this->start, $this->end ) );
