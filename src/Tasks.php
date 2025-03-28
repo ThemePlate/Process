@@ -124,16 +124,15 @@ class Tasks {
 	}
 
 
-	public function execute(): bool {
+	public function execute(): void {
 
 		if ( array() === $this->tasks ) {
-			return false;
+			return;
 		}
 
 		$this->save( $this->tasks );
 		$this->clear();
-
-		return ! $this->async->dispatch();
+		$this->async->dispatch();
 
 	}
 

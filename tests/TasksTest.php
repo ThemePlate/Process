@@ -35,12 +35,14 @@ class TasksTest extends WP_UnitTestCase {
 	}
 
 	public function test_execute_with_nothing_added(): void {
-		$this->assertFalse( $this->tasks->execute() );
+		$this->execute_runner();
+		$this->assertSame( 0, did_filter( 'https_local_ssl_verify' ) );
 	}
 
 	public function test_execute_with_something_added(): void {
 		$this->tasks->add( 'time' );
-		$this->assertTrue( $this->tasks->execute() );
+		$this->execute_runner();
+		$this->assertSame( 1, did_filter( 'https_local_ssl_verify' ) );
 	}
 
 	public function test_removing_previously_added(): void {
