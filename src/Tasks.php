@@ -255,9 +255,9 @@ class Tasks {
 	}
 
 
-	public function is_running() {
+	public function is_running(): int {
 
-		return get_transient( $this->identifier . '_lock' );
+		return (int) get_transient( $this->identifier . '_lock' );
 
 	}
 
@@ -288,7 +288,7 @@ class Tasks {
 
 	public function next_scheduled(): int {
 
-		return wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) );
+		return (int) wp_next_scheduled( $this->identifier . '_event', array( $this->identifier ) );
 
 	}
 
