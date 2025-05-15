@@ -63,6 +63,7 @@ class TasksTest extends WP_UnitTestCase {
 		$this->expectNotToPerformAssertions();
 	}
 
+	/** @param mixed $output */
 	public function tasks_callback( $output ): void {
 		$this->assertInstanceOf( Report::class, $output );
 	}
