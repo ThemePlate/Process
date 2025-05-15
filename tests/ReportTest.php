@@ -10,6 +10,9 @@ use ThemePlate\Process\Report;
 use PHPUnit\Framework\TestCase;
 
 class ReportTest extends TestCase {
+	/**
+	 * @return array<string, array<int, mixed>>
+	 */
 	public function for_to_string(): array {
 		return array(
 			'with empty data'       => array( array() ),
@@ -34,6 +37,8 @@ class ReportTest extends TestCase {
 
 	/**
 	 * @dataProvider for_to_string
+	 *
+	 * @param array<int, mixed> $data
 	 */
 	public function test_to_string( array $data ): void {
 		$time   = time();

@@ -51,6 +51,7 @@ class AsyncTest extends WP_Ajax_UnitTestCase {
 		$this->assertFalse( $async->dispatch() );
 	}
 
+	/** @return array<string, array<int, mixed>> */
 	public function for_then_and_catch(): array {
 		return array(
 			'with a successful execution' => array( array( 'here' ) ),
@@ -60,6 +61,7 @@ class AsyncTest extends WP_Ajax_UnitTestCase {
 
 	/**
 	 * @dataProvider for_then_and_catch
+	 * @param array<int, mixed> $args
 	 */
 	public function test_then_and_catch( array $args ): void {
 		$async = new Async( array( $this, 'ajax_callback' ), $args );
